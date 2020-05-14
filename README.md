@@ -10,4 +10,3 @@ For example:
 - (and name:'tracy' gender:'male')
 
 The query syntax can be translated to simple sql statement currently.
- 
