@@ -23,10 +23,10 @@ class SqlStatementTranslatorTest extends TestCase
         $expected = "(`age`>='2' and `age`<='10' and !(`gender`='male') and `name`='tracy')";
         $this->assertEquals($expected, $translator->translate());
 
-        $query = "(not age:['2','10'] gender:'male' (or name:'tracy' name:'cuixi'))";
+        $query = "(not age:[,'10'} gender:'male' (or name:'tracy' name:'cuixi'))";
         $parser = new Parser(new Lexer(new Input($query)));
         $translator = new SqlStatementTranslator($parser->parse());
-        $expected = "!(`age`>='2' and `age`<='10' and `gender`='male' and (`name`='tracy' or `name`='cuixi'))";
+        $expected = "!(`age`<'10' and `gender`='male' and (`name`='tracy' or `name`='cuixi'))";
         $this->assertEquals($expected, $translator->translate());
     }
 }
