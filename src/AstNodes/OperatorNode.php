@@ -27,4 +27,16 @@ class OperatorNode extends AbstractNode
     {
         return $this->children;
     }
+
+    public function toArray(): array
+    {
+        $arr = [
+            'name' => __CLASS__,
+            'value' => $this->value,
+        ];
+        foreach ($this->children as $child) {
+            $arr['children'][] = $child->toArray();
+        }
+        return $arr;
+    }
 }

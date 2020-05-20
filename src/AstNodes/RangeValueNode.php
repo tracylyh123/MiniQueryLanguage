@@ -52,4 +52,15 @@ class RangeValueNode extends AbstractValueNode
     {
         return isset($this->right);
     }
+
+    public function toArray(): array
+    {
+        return [
+            'name' => __CLASS__,
+            'left' => $this->left,
+            'include_left' => $this->includeLeft,
+            'right' => $this->right,
+            'include_right' => $this->includeRight,
+        ];
+    }
 }

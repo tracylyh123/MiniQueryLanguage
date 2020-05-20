@@ -14,4 +14,6 @@ abstract class AbstractNode
     {
         return $this->parent;
     }
+
+    abstract public function toArray(): array;
 }

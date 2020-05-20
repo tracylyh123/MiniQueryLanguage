@@ -22,4 +22,13 @@ class OptionNode extends AbstractNode
     {
         return $this->valueNode;
     }
+
+    public function toArray(): array
+    {
+        return [
+            'name' => __CLASS__,
+            'field' => $this->field,
+            'value' => $this->valueNode->toArray()
+        ];
+    }
 }
