@@ -6,7 +6,7 @@ The basic syntax is (OPERATOR OPTIONS EXPRESSION)
 
 For example:
 - (and name:'tracy')
-- (and name:'tracy' (or name:'peter'))
+- (or name:'tracy' name:'peter')
 - (and name:'tracy' gender:'male')
 
 The query syntax can be translated to simple sql statement currently.

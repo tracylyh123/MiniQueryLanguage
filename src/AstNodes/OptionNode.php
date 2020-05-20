@@ -1,18 +1,16 @@
 <?php
 namespace MiniQueryLanguage\AstNodes;
 
-use MiniQueryLanguage\Visitors\AbstractNodeVisitor;
-
 class OptionNode extends AbstractNode
 {
     protected $field;
 
-    protected $value;
+    protected $valueNode;
 
-    public function __construct(string $field, string $value)
+    public function __construct(string $field, AbstractValueNode $valueNode)
     {
         $this->field = $field;
-        $this->value = $value;
+        $this->valueNode = $valueNode;
     }
 
     public function getField(): string
@@ -20,13 +18,8 @@ class OptionNode extends AbstractNode
         return $this->field;
     }
 
-    public function getValue(): string
+    public function getValue(): AbstractValueNode
     {
-        return $this->value;
-    }
-
-    public function accept(AbstractNodeVisitor $visitor)
-    {
-        $visitor->visitOptionNode($this);
+        return $this->valueNode;
     }
 }

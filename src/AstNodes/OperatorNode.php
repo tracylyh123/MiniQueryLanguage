@@ -1,8 +1,6 @@
 <?php
 namespace MiniQueryLanguage\AstNodes;
 
-use MiniQueryLanguage\Visitors\AbstractNodeVisitor;
-
 class OperatorNode extends AbstractNode
 {
     protected $value;
@@ -28,10 +26,5 @@ class OperatorNode extends AbstractNode
     public function getChildren(): array
     {
         return $this->children;
-    }
-
-    public function accept(AbstractNodeVisitor $visitor)
-    {
-        $visitor->visitOperatorNode($this);
     }
 }

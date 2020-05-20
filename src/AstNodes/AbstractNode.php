@@ -1,8 +1,6 @@
 <?php
 namespace MiniQueryLanguage\AstNodes;
 
-use MiniQueryLanguage\Visitors\AbstractNodeVisitor;
-
 abstract class AbstractNode
 {
     protected $parent;
@@ -16,6 +14,4 @@ abstract class AbstractNode
     {
         return $this->parent;
     }
-
-    abstract public function accept(AbstractNodeVisitor $visitor);
 }

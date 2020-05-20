@@ -8,18 +8,28 @@ class Lexer implements \Iterator
     const T_LITERAL = 'T_LITERAL';
     const T_LPAREN = 'T_LPAREN';
     const T_RPAREN = 'T_RPAREN';
+    const T_LBRACKET = 'T_LBRACKET';
+    const T_RBRACKET = 'T_RBRACKET';
+    const T_LBRACE = 'T_LBRACE';
+    const T_RBRACE = 'T_RBRACE';
+    const T_COMMA = 'T_COMMA';
     const T_UNKNOWN = 'T_UNKNOWN';
     const T_EOF = 'T_EOF';
 
     const OPERATORS = [
         'or',
         'and',
-        'not'
+        'not',
     ];
 
-    const PARENS = [
+    const SIMPLE_TOKENS = [
         '(' => self::T_LPAREN,
         ')' => self::T_RPAREN,
+        '[' => self::T_LBRACKET,
+        ']' => self::T_RBRACKET,
+        '{' => self::T_LBRACE,
+        '}' => self::T_RBRACE,
+        ',' => self::T_COMMA,
     ];
 
     const QUOTES = [
@@ -29,6 +39,7 @@ class Lexer implements \Iterator
 
     const WHITESPACES = [
         ' ',
+        "\t"
     ];
 
     const IDENTIFIERS = [
@@ -52,15 +63,7 @@ class Lexer implements \Iterator
     public function __construct(Input $input)
     {
         $this->input = $input;
-        $this->init();
-    }
-
-    protected function init(): void
-    {
         $this->rewind();
-        $this->tokens = [
-            0 => $this->nextToken()
-        ];
     }
 
     public function current(): Token
@@ -92,6 +95,9 @@ class Lexer implements \Iterator
         $this->position = 0;
         $this->input->rewind();
         $this->isFinished = false;
+        $this->tokens = [
+            0 => $this->nextToken()
+        ];
     }
 
     public function valid(): bool
@@ -112,9 +118,9 @@ class Lexer implements \Iterator
                 $token = $this->consumeIdentifiers($current, $position);
             } elseif (in_array($current, self::QUOTES)) {
                 $token = $this->consumeInside($current, $position);
-            } elseif (isset(self::PARENS[$current])) {
+            } elseif (isset(self::SIMPLE_TOKENS[$current])) {
                 $this->input->next();
-                $token = new Token(self::PARENS[$current], $current, $position);
+                $token = new Token(self::SIMPLE_TOKENS[$current], $current, $position);
             } elseif (in_array($current, self::WHITESPACES)) {
                 $this->input->next();
                 goto bof;

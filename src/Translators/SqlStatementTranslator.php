@@ -4,6 +4,8 @@ namespace MiniQueryLanguage\Translators;
 use MiniQueryLanguage\AstNodes\AbstractNode;
 use MiniQueryLanguage\AstNodes\OperatorNode;
 use MiniQueryLanguage\AstNodes\OptionNode;
+use MiniQueryLanguage\AstNodes\RangeValueNode;
+use MiniQueryLanguage\AstNodes\RegularValueNode;
 
 class SqlStatementTranslator extends AbstractTranslator
 {
@@ -12,18 +14,46 @@ class SqlStatementTranslator extends AbstractTranslator
         return $this->_translate($this->ast);
     }
 
-    public function _translate(AbstractNode $node): string
+    protected function _translate(AbstractNode $node): string
     {
         if ($node instanceof OperatorNode) {
             $expressions = [];
             foreach ($node->getChildren() as $child) {
-                $expression = $this->_translate($child);
-                $operator = $node->getValue() === 'not' ? '!=' : '=';
-                $expressions[] = sprintf($expression, $operator);
+                $expressions[] = $this->_translate($child);
             }
-            return sprintf("(%s)", implode(' ' . $node->getValue() . ' ', $expressions));
+            if ($node->getValue() === 'not') {
+                return sprintf("!(%s)", implode(' and ', $expressions));
+            }
+            return sprintf("(%s)", implode(" {$node->getValue()} ", $expressions));
         } elseif ($node instanceof OptionNode) {
-            return sprintf("`%s`%%s'%s'", $node->getField(), $node->getValue());
+            $value = $node->getValue();
+            if ($value instanceof RangeValueNode) {
+                $clause = '';
+                if ($value->hasLeft()) {
+                    $clause .= sprintf("`%s`%s'%s'",
+                        $node->getField(),
+                        $value->includeLeft() ? '>=' : '>',
+                        $value->getLeft()
+                    );
+                }
+                if ($value->hasRight()) {
+                    if (!empty($clause)) {
+                        $clause .= ' and ';
+                    }
+                    $clause .= sprintf("`%s`%s'%s'",
+                        $node->getField(),
+                        $value->includeRight() ? '<=' : '<',
+                        $value->getRight()
+                    );
+                }
+                return $clause;
+            } elseif ($value instanceof RegularValueNode) {
+                return sprintf("`%s`%s'%s'",
+                    $node->getField(),
+                    '=',
+                    $value->getValue()
+                );
+            }
         }
         throw new \RuntimeException('unexpected node type: ' . get_class($node));
     }

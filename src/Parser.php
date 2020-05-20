@@ -4,18 +4,16 @@ namespace MiniQueryLanguage;
 use MiniQueryLanguage\AstNodes\AbstractNode;
 use MiniQueryLanguage\AstNodes\OperatorNode;
 use MiniQueryLanguage\AstNodes\OptionNode;
-use MiniQueryLanguage\Visitors\AbstractNodeVisitor;
+use MiniQueryLanguage\AstNodes\RangeValueNode;
+use MiniQueryLanguage\AstNodes\RegularValueNode;
 
 class Parser
 {
     protected $lexer;
 
-    protected $visitor;
-
-    public function __construct(Lexer $lexer, AbstractNodeVisitor $visitor = null)
+    public function __construct(Lexer $lexer)
     {
         $this->lexer = $lexer;
-        $this->visitor = $visitor;
     }
 
     public function parse(): AbstractNode
@@ -33,19 +31,58 @@ class Parser
         return $node;
     }
 
+    protected function parseRange(): RangeValueNode
+    {
+        $left = $right = $includeLeft = $includeRight = null;
+        $current = $this->lexer->current();
+        if ($current->typeIs(Lexer::T_LBRACE)) {
+            $includeLeft = false;
+        } elseif ($current->typeIs(Lexer::T_LBRACKET)) {
+            $includeLeft = true;
+        } else {
+            throw new \RuntimeException("unexpected token type: {$current->getType()}");
+        }
+        $this->lexer->next();
+        $current = $this->lexer->current();
+        if ($current->typeIs(Lexer::T_LITERAL)) {
+            $left = $current->getValue();
+            $this->lexer->next();
+        }
+        $current = $this->lexer->current();
+        if (!$current->typeIs(Lexer::T_COMMA)) {
+            throw new \RuntimeException("unexpected token type: {$current->getType()}");
+        }
+        $this->lexer->next();
+        $current = $this->lexer->current();
+        if ($current->typeIs(Lexer::T_LITERAL)) {
+            $right = $current->getValue();
+            $this->lexer->next();
+        }
+        $current = $this->lexer->current();
+        if ($current->typeIs(Lexer::T_RBRACE)) {
+            $includeRight = false;
+        } elseif ($current->typeIs(Lexer::T_RBRACKET)) {
+            $includeRight = true;
+        } else {
+            throw new \RuntimeException("unexpected token type: {$current->getType()}");
+        }
+        return new RangeValueNode($left, $includeLeft, $right, $includeRight);
+    }
+
     protected function parseOption(): AbstractNode
     {
         $current = $this->lexer->current();
         $this->lexer->next();
         $next = $this->lexer->current();
-        if (!$next->typeIs(Lexer::T_LITERAL)) {
+        if ($next->typeIs(Lexer::T_LBRACKET) || $next->typeIs(Lexer::T_LBRACE)) {
+            $value = $this->parseRange();
+        } elseif ($next->typeIs(Lexer::T_LITERAL)) {
+            $value = new RegularValueNode($next->getValue());
+        } else {
             throw new \RuntimeException("unexpected token type: {$next->getType()}");
         }
+        $node = new OptionNode($current->getValue(), $value);
         $this->lexer->next();
-        $node = new OptionNode($current->getValue(), $next->getValue());
-        if (isset($this->visitor)) {
-            $this->visitor->visitOptionNode($node);
-        }
         return $node;
     }
 
@@ -57,9 +94,6 @@ class Parser
             throw new \RuntimeException("unexpected token type: {$token->getType()}");
         }
         $node = new OperatorNode($token->getValue());
-        if (isset($this->visitor)) {
-            $this->visitor->visitOperatorNode($node);
-        }
         $this->lexer->next();
 
         while ($this->lexer->valid()) {
@@ -68,6 +102,7 @@ class Parser
                 $node->addChild($this->parse());
             } else {
                 $this->lexer->next();
+                break;
             }
         }
         return $node;
