@@ -7,7 +7,7 @@ use MiniQueryLanguage\AstNodes\OptionNode;
 use MiniQueryLanguage\AstNodes\RangeValueNode;
 use MiniQueryLanguage\AstNodes\RegularValueNode;
 
-class SqlStatementTranslator extends AbstractTranslator
+class SqlClauseTranslator extends AbstractTranslator
 {
     public function translate(): string
     {

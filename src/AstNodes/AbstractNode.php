@@ -1,6 +1,8 @@
 <?php
 namespace MiniQueryLanguage\AstNodes;
 
+use MiniQueryLanguage\Visitors\AbstractVisitor;
+
 abstract class AbstractNode
 {
     protected $parent;
@@ -13,6 +15,11 @@ abstract class AbstractNode
     public function getParent(): AbstractNode
     {
         return $this->parent;
+    }
+
+    public function accept(AbstractVisitor $visitor)
+    {
+        $visitor->visit($this);
     }
 
     abstract public function toArray(): array;
