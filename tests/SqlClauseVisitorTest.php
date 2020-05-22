@@ -9,7 +9,7 @@ use PHPUnit\Framework\TestCase;
 
 class SqlClauseVisitorTest extends TestCase
 {
-    public function testTranslate()
+    public function testGetSqlClause()
     {
         $query = "(or age:'6' (and weight:'30' (or name:'tracy' gender:'male' (not height:'100'))))";
         $parser = new Parser(new Lexer(new Input($query)));
