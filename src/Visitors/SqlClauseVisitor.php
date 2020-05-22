@@ -20,7 +20,7 @@ class SqlClauseVisitor extends AbstractVisitor
         }
         $children = $node->getChildren();
         while (($child = array_shift($children)) instanceof AbstractNode) {
-            $this->visit($child);
+            $child->accept($this);
             if (!empty($children)) {
                 if ($node->getValue() === 'not') {
                     $this->sqlClause .= " and ";
@@ -34,7 +34,7 @@ class SqlClauseVisitor extends AbstractVisitor
 
     public function visitOption(OptionNode $node)
     {
-        $this->visit($node->getValue());
+        $node->getValue()->accept($this);
         $this->sqlClause = sprintf($this->sqlClause, $node->getField(), $node->getField());
     }
 
