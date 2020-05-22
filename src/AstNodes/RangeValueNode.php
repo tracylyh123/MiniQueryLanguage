@@ -56,7 +56,7 @@ class RangeValueNode extends AbstractValueNode
     public function toArray(): array
     {
         return [
-            'name' => __CLASS__,
+            'name' => $this->getNodeName(),
             'left' => $this->left,
             'include_left' => $this->includeLeft,
             'right' => $this->right,

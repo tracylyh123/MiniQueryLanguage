@@ -26,7 +26,7 @@ class OptionNode extends AbstractNode
     public function toArray(): array
     {
         return [
-            'name' => __CLASS__,
+            'name' => $this->getNodeName(),
             'field' => $this->field,
             'value' => $this->valueNode->toArray()
         ];

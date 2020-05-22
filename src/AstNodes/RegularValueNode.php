@@ -18,7 +18,7 @@ class RegularValueNode extends AbstractValueNode
     public function toArray(): array
     {
         return [
-            'name' => __CLASS__,
+            'name' => $this->getNodeName(),
             'value' => $this->value
         ];
     }

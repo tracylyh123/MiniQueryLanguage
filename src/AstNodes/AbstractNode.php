@@ -22,5 +22,11 @@ abstract class AbstractNode
         $visitor->visit($this);
     }
 
+    public function getNodeName(): string
+    {
+        $items = explode('\\', get_class($this));
+        return end($items);
+    }
+
     abstract public function toArray(): array;
 }

@@ -31,7 +31,7 @@ class OperatorNode extends AbstractNode
     public function toArray(): array
     {
         $arr = [
-            'name' => __CLASS__,
+            'name' => $this->getNodeName(),
             'value' => $this->value,
         ];
         foreach ($this->children as $child) {
