@@ -26,7 +26,7 @@ class Parser
         } elseif ($token->typeIs(Lexer::T_UNKNOWN)) {
             throw new \RuntimeException("unknown token {$token->getValue()}, position: {$token->getPosition()}");
         } else {
-            throw new \RuntimeException("unexpected token type: {$token->getType()}");
+            throw new \RuntimeException("unexpected token type: {$token->getType()}, position: {$token->getPosition()}");
         }
         return $node;
     }
@@ -40,7 +40,7 @@ class Parser
         } elseif ($current->typeIs(Lexer::T_LBRACKET)) {
             $includeLeft = true;
         } else {
-            throw new \RuntimeException("unexpected token type: {$current->getType()}");
+            throw new \RuntimeException("unexpected token type: {$current->getType()}, position: {$current->getPosition()}");
         }
         $this->lexer->next();
         $current = $this->lexer->current();
@@ -50,7 +50,7 @@ class Parser
         }
         $current = $this->lexer->current();
         if (!$current->typeIs(Lexer::T_COMMA)) {
-            throw new \RuntimeException("unexpected token type: {$current->getType()}");
+            throw new \RuntimeException("unexpected token type: {$current->getType()}, position: {$current->getPosition()}");
         }
         $this->lexer->next();
         $current = $this->lexer->current();
@@ -64,7 +64,7 @@ class Parser
         } elseif ($current->typeIs(Lexer::T_RBRACKET)) {
             $includeRight = true;
         } else {
-            throw new \RuntimeException("unexpected token type: {$current->getType()}");
+            throw new \RuntimeException("unexpected token type: {$current->getType()}, position: {$current->getPosition()}");
         }
         return new RangeValueNode($left, $includeLeft, $right, $includeRight);
     }
@@ -79,7 +79,7 @@ class Parser
         } elseif ($next->typeIs(Lexer::T_LITERAL)) {
             $value = new RegularValueNode($next->getValue());
         } else {
-            throw new \RuntimeException("unexpected token type: {$next->getType()}");
+            throw new \RuntimeException("unexpected token type: {$next->getType()}, position: {$next->getPosition()}");
         }
         $node = new OptionNode($current->getValue(), $value);
         $this->lexer->next();
@@ -91,7 +91,7 @@ class Parser
         $this->lexer->next();
         $token = $this->lexer->current();
         if (!$token->typeIs(Lexer::T_OPERATOR)) {
-            throw new \RuntimeException("unexpected token type: {$token->getType()}");
+            throw new \RuntimeException("unexpected token type: {$token->getType()}, position: {$token->getPosition()}");
         }
         $node = new OperatorNode($token->getValue());
         $this->lexer->next();

@@ -39,7 +39,7 @@ class TreePrintVisitor extends AbstractVisitor
         $this->writeln("name: {$node->getNodeName()}, left: {$node->getLeft()}, right: {$node->getRight()}");
     }
 
-    public function __toString()
+    public function print()
     {
         return $this->tree;
     }
